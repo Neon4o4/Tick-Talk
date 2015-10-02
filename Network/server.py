@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 # coding=uft-8
+# Created by LiXu on 2015/10/2.
 
 import socket
 import threading
@@ -15,6 +16,10 @@ g_nIPV6Port = 60006
 
 
 class ThreadedTCPRequestHandler(BaseRequestHandler):
+    """
+    Server's request handler.
+    Rewrite method 'handle' to fix recv and send/sendall issues.
+    """
     def handle(self):
         pPyAudioObj = PyAudio()
         pStream = pPyAudioObj.open(
@@ -25,6 +30,11 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
 
 
 class MyTCPServer(TCPServer):
+    """
+    Rewrite of TCPServer in order to support IPV6 network.
+    Change BaseServer's __init__ method's server address to new form.
+    Change TCPServer's socket to new type of socket using af, socktype, proto.
+    """
     def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):
         BaseServer.__init__(self, server_address, RequestHandlerClass)
         global g_sIPV6Addr, g_nIPV6Port
@@ -43,6 +53,9 @@ class MyTCPServer(TCPServer):
 
 
 class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
+    """
+    This is the mixture of MyTCPServer and ThreadingMixIn.
+    """
     pass
 
 
