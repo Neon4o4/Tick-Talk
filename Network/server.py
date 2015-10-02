@@ -10,6 +10,7 @@ from SocketServer import BaseServer, BaseRequestHandler, ThreadingMixIn, TCPServ
 import getAddress
 from pyaudio import PyAudio, paInt16
 
+bTest = False
 g_sIPV4Addr = getAddress.GetIPV4Address()
 g_nIPV4Port = 40004
 g_sIPV6Addr = getAddress.GetIPV6Address()
@@ -25,9 +26,15 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
         pPyAudioObj = PyAudio()
         pStream = pPyAudioObj.open(
             format=paInt16, channels=1, rate=16000, output=True)
-        while True:
+        if bTest is False:
             data = self.request.recv(16384)
             pStream.write(data)
+        else:
+            data = self.request.recv(1024)
+            cur_thread = threading.current_thread()
+            response = "{}: {}".format(cur_thread.name, data)
+            self.request.sendall(response)
+
 
 
 class MyTCPServer(TCPServer):
@@ -64,6 +71,7 @@ class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
 
 
 def main():
+    global g_sIPV6Addr, g_nIPV6Port
     res = socket.getaddrinfo(
         g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
         socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
@@ -77,5 +85,33 @@ def main():
     # server.server_close()
 
 
+def test():
+    """
+    This method works with test.py in folder Network.
+    """
+    global g_sIPV6Addr, g_nIPV6Port
+    res = socket.getaddrinfo(
+        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
+        socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+    # print res
+    af, socktype, proto, canonname, sa = res[0]
+    server = ThreadedTCPServer(sa, ThreadedTCPRequestHandler)
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
+    server_thread.start()
+    print "Server loop starts!"
+    while True:
+        pass
+    # p1 = CTest(res[0], "1")
+    # p2 = CTest(res[0], "2")
+    # p3 = CTest(res[0], "3")
+    # from Utilities.Util import Functor
+    # import time
+    # time.sleep(3)
+    # server.shutdown()
+    # server.server_close()
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    test()
