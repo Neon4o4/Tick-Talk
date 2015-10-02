@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
 # coding=uft-8
-# Created by LiXu on 2015/10/2.
+
+# Created by lixu19950414 and Neon404 on 2015/10/2
 
 import socket
 import threading
@@ -36,6 +37,9 @@ class MyTCPServer(TCPServer):
     Change TCPServer's socket to new type of socket using af, socktype, proto.
     """
     def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):
+        """
+        @prama server_address This prama shoubld be create by socket.getaddrinfo method.
+        """
         BaseServer.__init__(self, server_address, RequestHandlerClass)
         global g_sIPV6Addr, g_nIPV6Port
         res = socket.getaddrinfo(
@@ -55,8 +59,8 @@ class MyTCPServer(TCPServer):
 class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
     """
     This is the mixture of MyTCPServer and ThreadingMixIn.
+    This class inherits MyTCPServer's __init__ method.
     """
-    pass
 
 
 def main():
