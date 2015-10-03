@@ -23,16 +23,21 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
     Rewrite method 'handle' to fix recv and send/sendall issues.
     """
     def handle(self):
-        pPyAudioObj = PyAudio()
-        pStream = pPyAudioObj.open(
-            format=paInt16, channels=1, rate=16000, output=True)
         if bTest is False:
+            pPyAudioObj = PyAudio()
+            pStream = pPyAudioObj.open(
+                format=paInt16, channels=1, rate=16000, output=True)
             data = self.request.recv(16384)
             pStream.write(data)
         else:
             data = self.request.recv(1024)
             cur_thread = threading.current_thread()
-            response = "{}: {}".format(cur_thread.name, data)
+            # print cur_alive_thread_num
+            s = 0
+            for i in range(10000000):
+                s += 1
+            nThreadNum = threading.activeCount()
+            response = "{}: {}".format(cur_thread.name, data) + "\nCurrent alive thread_num is " + str(nThreadNum)
             self.request.sendall(response)
 
 
@@ -89,7 +94,8 @@ def test():
     """
     This method works with test.py in folder Network.
     """
-    global g_sIPV6Addr, g_nIPV6Port
+    global g_sIPV6Addr, g_nIPV6Port, bTest
+    bTest = True
     res = socket.getaddrinfo(
         g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
         socket.SOCK_STREAM, 0, socket.AI_PASSIVE)

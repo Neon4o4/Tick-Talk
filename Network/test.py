@@ -1,5 +1,9 @@
 import socket
 import threading
+import getAddress
+
+g_nTest = 1
+mutex = threading.Lock()
 
 
 class CTest(object):
@@ -22,16 +26,26 @@ class CTest(object):
     #     self.m_pSocket.close()
 
 
-def create_CTest():
-    res = (30, 1, 6, '', ('2001:250:401:3517:a65e:60ff:febd:e96f', 60006, 0, 0))
+def create_CTest(res, message):
+    # res = (30, 1, 6, '', ('2001:250:401:3517:a65e:60ff:febd:e96f', 60006, 0, 0))
     # print message
-    p = CTest(res, "1")
+    global g_nTest
+    global mutex
+    # if mutex.acquire():
+    #     p = CTest(res, str(g_nTest))
+    #     g_nTest += 1
+    #     p.Send()
+    # mutex.release()
+    if mutex.acquire():
+        p = CTest(res, str(g_nTest))
+        g_nTest += 1
+    mutex.release()
     p.Send()
 
 
 def main():
     for i in range(5):
-        t = threading.Thread(target=create_CTest)
+        t = threading.Thread(target=create_CTest, args=((30, 1, 6, '', (getAddress.GetIPV6Address(), 60006, 0, 0)), str(i)))
         t.start()
 
 if __name__ == '__main__':
