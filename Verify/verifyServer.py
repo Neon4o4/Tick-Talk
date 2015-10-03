@@ -13,7 +13,8 @@ g_sIPV4Addr = network.g_sIPV4
 g_nIPV4Port = network.g_nIPV4Port
 g_sIPV6Addr = network.g_sIPV6
 g_nIPV6Port = network.g_nIPV6Port
-g_lConnected = {}  # This dictionary contains (hostname, (af, socktype, proto, canonname, sa)) as elements.
+g_dConnected = {}  # This dictionary contains (hostname, (af, socktype, proto, canonname, sa)) as elements.
+g_pLock = threading.Lock()
 
 
 class ThreadedTCPRequestHandler(BaseRequestHandler):
@@ -23,14 +24,16 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
     """
     def handle(self):
         data = self.request.recv(1024)
-        cur_thread = threading.current_thread()
-        # print cur_alive_thread_num
-        s = 0
-        for i in range(10000000):
-            s += 1
-        nThreadNum = threading.activeCount()
-        response = "{}: {}".format(cur_thread.name, data) + "\nCurrent alive thread_num is " + str(nThreadNum)
-        self.request.sendall(response)
+        hostname = data
+        self.request.sendall('hostname: %s is trying to connect', hostname)  # Send hostname back.
+        data = self.request.recv(1024)
+        res = eval(data)
+        self.request.sendall('using address: %s', data)  # Send address back.
+        global g_pLock
+        if g_pLock.acquire():
+            g_dConnected[hostname] = res
+        g_pLock.release()
+
 
 
 class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
