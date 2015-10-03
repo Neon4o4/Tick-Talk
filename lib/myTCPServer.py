@@ -17,7 +17,6 @@ class MyTCPServer(TCPServer):
         @prama server_address This prama shoubld be create by socket.getaddrinfo method.
         """
         BaseServer.__init__(self, server_address, RequestHandlerClass)
-        global g_sIPV6Addr, g_nIPV6Port
         res = socket.getaddrinfo(
             server_address[0], server_address[1], socket.AF_INET6,
             socket.SOCK_STREAM, 0, socket.AI_PASSIVE)

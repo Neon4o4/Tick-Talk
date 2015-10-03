@@ -6,15 +6,15 @@ import socket
 import threading
 from SocketServer import BaseServer, BaseRequestHandler, ThreadingMixIn
 from pyaudio import PyAudio, paInt16
-from myTCPServer import MyTCPServer
-import Defines.network
+from lib.myTCPServer import MyTCPServer
+import Defines.network as network
 
 
 bTest = False
-g_sIPV4Addr = Defines.network.g_sIPV4
-g_nIPV4Port = Defines.network.g_nIPV4Port
-g_sIPV6Addr = Defines.network.g_sIPV6
-g_nIPV6Port = Defines.network.g_nIPV6Port
+g_sIPV4Addr = network.g_sIPV4
+g_nIPV4Port = network.g_nIPV4Port
+g_sIPV6Addr = network.g_sIPV6
+g_nIPV6Port = network.g_nIPV6Port
 
 
 class ThreadedTCPRequestHandler(BaseRequestHandler):
