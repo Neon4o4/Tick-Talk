@@ -14,8 +14,8 @@ def GetGlobalChatPanel():
     if g_pChatPanel:
         return g_pChatPanel
     else:
-        import FrameUI
-        g_pChatPanel = CChatPanel(FrameUI.g_pFrame)
+        import frameUI
+        g_pChatPanel = CChatPanel(frameUI.g_pFrame)
 
 
 class CChatPanel(wx.Panel):

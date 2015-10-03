@@ -2,14 +2,12 @@
 
 # coding=uft-8
 
-# Created by lixu19950414 and Neon404 on 2015/10/2
-
 import socket
 import threading
 from SocketServer import BaseServer, BaseRequestHandler, ThreadingMixIn
 import getAddress
 from pyaudio import PyAudio, paInt16
-from MyTCPServer import MyTCPServer
+from myTCPServer import MyTCPServer
 
 
 bTest = False
