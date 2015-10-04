@@ -13,27 +13,39 @@ g_sIPV4Addr = network.g_sIPV4
 g_nIPV4Port = network.g_nIPV4Port
 g_sIPV6Addr = network.g_sIPV6
 g_nIPV6Port = network.g_nIPV6Port
-g_dConnected = {}  # This dictionary contains (hostname, (af, socktype, proto, canonname, sa)) as elements.
+g_dConnected = {}  # This dictionary contains ((af, socktype, proto, canonname, sa), hostname) as elements.
 g_pLock = threading.Lock()
 
 
+def SendMessage(res, message):
+    af, socktype, proto, canonname, sa = res
+    pSocket = socket.socket(af, socktype, proto)
+    pSocket.connect(sa)
+    pSocket.sendall(message)
+    pSocket.close()
+
+
 class ThreadedTCPRequestHandler(BaseRequestHandler):
+    nMessageID = 0
     """
     Server's request handler.
     Rewrite method 'handle' to fix recv and send/sendall issues.
     """
     def handle(self):
         data = self.request.recv(1024)
-        hostname = data
-        self.request.sendall('hostname: %s is trying to connect', hostname)  # Send hostname back.
-        data = self.request.recv(1024)
-        res = eval(data)
-        self.request.sendall('using address: %s', data)  # Send address back.
-        global g_pLock
+        hostname, res, loginorout = eval(data)
+        global g_pLock, g_dConnected
         if g_pLock.acquire():
-            g_dConnected[hostname] = res
+            ThreadedTCPRequestHandler.nMessageID += 1
+            if loginorout is True:
+                g_dConnected[res] = hostname  # In case same hostname.
+            else:
+                del g_dConnected[res]
+            sSend = str(ThreadedTCPRequestHandler.nMessageID) + str(g_dConnected)
         g_pLock.release()
-
+        for addr in g_dConnected.keys():
+            t = threading.Thread(target=SendMessage, args=(addr, sSend))
+            t.start()
 
 
 class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
@@ -54,5 +66,7 @@ def main():
     server_thread.daemon = True
     server_thread.start()
     print "verifyServer loop starts!"
+    while True:
+        pass
     # server.shutdown()
     # server.server_close()

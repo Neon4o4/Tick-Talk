@@ -14,7 +14,7 @@ class MyTCPServer(TCPServer):
     """
     def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):
         """
-        @prama server_address This prama shoubld be create by socket.getaddrinfo method.
+        @prama server_address: This prama shoubld be create by socket.getaddrinfo method.
         """
         BaseServer.__init__(self, server_address, RequestHandlerClass)
         res = socket.getaddrinfo(
