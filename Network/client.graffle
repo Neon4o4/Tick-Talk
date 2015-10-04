@@ -14,7 +14,7 @@
 	<key>BackgroundGraphic</key>
 	<dict>
 		<key>Bounds</key>
-		<string>{{0, 0}, {1035, 971}}</string>
+		<string>{{0, 0}, {1035, 999}}</string>
 		<key>Class</key>
 		<string>SolidGraphic</string>
 		<key>ID</key>
@@ -33,7 +33,7 @@
 	<key>CanvasOrigin</key>
 	<string>{0, 0}</string>
 	<key>CanvasSize</key>
-	<string>{1035, 971}</string>
+	<string>{1035, 999}</string>
 	<key>ColumnAlign</key>
 	<integer>0</integer>
 	<key>ColumnSpacing</key>
@@ -66,18 +66,19 @@
 			<key>Head</key>
 			<dict>
 				<key>ID</key>
-				<integer>183</integer>
+				<integer>181</integer>
 				<key>Info</key>
-				<integer>3</integer>
+				<integer>4</integer>
 			</dict>
 			<key>ID</key>
-			<integer>192</integer>
+			<integer>193</integer>
 			<key>Points</key>
 			<array>
-				<string>{621, 917}</string>
-				<string>{793.27835051546401, 917.01030927835052}</string>
-				<string>{792, 847.93169914710381}</string>
-				<string>{648, 846}</string>
+				<string>{576, 935}</string>
+				<string>{574.79125370793531, 963}</string>
+				<string>{432, 961.2381790295924}</string>
+				<string>{432.26955409665368, 630}</string>
+				<string>{531, 630}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -96,7 +97,7 @@
 				<key>ID</key>
 				<integer>190</integer>
 				<key>Info</key>
-				<integer>3</integer>
+				<integer>1</integer>
 			</dict>
 		</dict>
 		<dict>
@@ -1632,7 +1633,7 @@ lock userDict}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2015-10-04 07:03:36 +0000</string>
+	<string>2015-10-04 08:53:06 +0000</string>
 	<key>Modifier</key>
 	<string>LiXu-mac</string>
 	<key>NotesVisible</key>
@@ -1720,15 +1721,15 @@ lock userDict}</string>
 		<key>SidebarWidth</key>
 		<integer>230</integer>
 		<key>VisibleRegion</key>
-		<string>{{-14.969072164948434, 0}, {1065.979381443299, 608.24742268041246}}</string>
+		<string>{{-14.969072195355754, 390.72163796016935}, {1065.9793500021506, 608.24740474010537}}</string>
 		<key>Zoom</key>
-		<real>0.96999999999999997</real>
+		<real>0.97000002861022949</real>
 		<key>ZoomValues</key>
 		<array>
 			<array>
 				<string>版面 1</string>
+				<real>0.97000002861022949</real>
 				<real>0.96999999999999997</real>
-				<real>0.85999999999999999</real>
 			</array>
 		</array>
 	</dict>
