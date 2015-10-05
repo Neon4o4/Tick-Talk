@@ -13,8 +13,12 @@ from copy import deepcopy
 def _send_message_to_addr(res, sMessage):
     af, socktype, proto, cannoname, sa = res
     pSocket = socket.socket(af, socktype, proto)
-    pSocket.connect(sa)
-    pSocket.sendall(sMessage)
+    try:
+        pSocket.connect(sa)
+        pSocket.sendall(sMessage)
+    except Exception:
+        print 'Socket Exception happened in \
+        verifyServer.py._send_message_to_addr'
     pSocket.close()
 
 
