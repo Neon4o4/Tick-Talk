@@ -8,6 +8,7 @@ import threading
 import Defines.verify
 import Defines.network
 import Defines.recorder
+from copy import deepcopy
 
 
 class MsgSender():
@@ -17,12 +18,7 @@ class MsgSender():
     def __init__(self, RecorderConfig):
         self.config = RecorderConfig
         self.pPyAudioObj = PyAudio()
-        self.pStream = self.pPyAudioObj.open(
-            format=self.config['format'],
-            channels=self.config['channels'],
-            rate=self.config['rate'],
-            frames_per_buffer=self.config['frames_per_buffer'],
-            input=True)
+        self.pStream = None
 
     def _send_message_to_addr(addr, sMessage):
         af, socktype, proto, cannoname, sa = addr
@@ -32,28 +28,35 @@ class MsgSender():
         pSocket.close()
 
     def handle(self):
+        if not self.pStream:
+            self.pStream = self.pPyAudioObj.open(
+                format=self.config['format'],
+                channels=self.config['channels'],
+                rate=self.config['rate'],
+                frames_per_buffer=self.config['frames_per_buffer'],
+                input=True)
         pStream = self.pStream
         try:
             data = pStream.read(self.config['bufferSize'])
-        except Exception:
+        except Exception, e:
             print 'Cannot recognize received sound stream.\
                 Please check Network.server.ClientRequestHandler 1.'
+            print e
         # lock g_dUserDict
-        if Defines.verify.g_pLock.acquire():
-            for addr in Defines.verify.g_dUserDict:
-                try:
-                    t = threading.Thread(
-                        target=MsgSender._send_message_to_addr,
-                        args=(addr, data))
-                    t.start()
-                except Exception:
-                    print 'Cannot receive data.\
-                        Please check Network.server.ClientRequestHandler 2.'
-        Defines.verify.g_pLock.release()
+        UserDict = deepcopy(Defines.verify.g_dUserDict)
+        for addr in UserDict:
+            try:
+                t = threading.Thread(
+                    target=MsgSender._send_message_to_addr,
+                    args=(addr, data))
+                t.start()
+            except Exception:
+                print 'Cannot receive data.\
+                    Please check Network.server.ClientRequestHandler 2.'
 
     def sendLoginVerifyMsg(self):
-        verifyIP = Defines.network.g_sIPV4Addr
-        # verifyIP = '2001:250:401:3517:a65e:60ff:febd:e96f'
+        # verifyIP = Defines.network.g_sIPV4Addr
+        verifyIP = '10.81.30.121'
         verifyPort = Defines.network.g_nIPV4VerifyPort
         res = socket.getaddrinfo(
             verifyIP,
