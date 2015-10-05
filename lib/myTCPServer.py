@@ -3,6 +3,7 @@
 # coding=uft-8
 
 from SocketServer import TCPServer, BaseServer
+from SocketServer import ThreadingMixIn, BaseRequestHandler
 import socket
 
 
@@ -29,3 +30,34 @@ class MyTCPServer(TCPServer):
             except:
                 self.server_close()
                 raise
+
+
+class ThreadedTCPRequestHandler(BaseRequestHandler):
+    """
+    This class is create for ThreadedTCPServer.
+    Method 'handle' needs to be rewrite.
+
+    Examples:
+    data = self.request.recv(1024)
+    self.request.sendall(response)
+    """
+    def handle(self):
+        pass
+
+
+class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
+    """
+    This is the mixture of MyTCPServer and ThreadingMixIn.
+    This class inherits MyTCPServer's __init__ method.
+
+    Examples:
+    server = ThreadedTCPServer(sa, ThreadedTCPRequestHandler)
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
+    server_thread.start()
+    print "Server loop starts!"
+    # server.shutdown()
+    # server.server_close()
+    """
+    def __init__(self, server_address, ThreadedTCPHandlerClass, bind_and_activate=True):
+        MyTCPServer.__init__(self, server_address, ThreadedTCPHandlerClass, bind_and_activate)

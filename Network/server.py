@@ -4,9 +4,8 @@
 
 import socket
 import threading
-from SocketServer import BaseRequestHandler, ThreadingMixIn
 from pyaudio import PyAudio, paInt16
-from lib.myTCPServer import MyTCPServer
+from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
 import Defines.network as network
 
 
@@ -17,7 +16,7 @@ g_sIPV6Addr = network.g_sIPV6
 g_nIPV6Port = network.g_nIPV6Port
 
 
-class ThreadedTCPRequestHandler(BaseRequestHandler):
+class ServerRequestHandler(ThreadedTCPRequestHandler):
     """
     Server's request handler.
     Rewrite method 'handle' to fix recv and send/sendall issues.
@@ -40,13 +39,6 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
             response = "{}: {}".format(cur_thread.name, data) \
                 + "\nCurrent alive thread_num is " + str(nThreadNum)
             self.request.sendall(response)
-
-
-class ThreadedTCPServer(ThreadingMixIn, MyTCPServer):
-    """
-    This is the mixture of MyTCPServer and ThreadingMixIn.
-    This class inherits MyTCPServer's __init__ method.
-    """
 
 
 def main():
@@ -75,7 +67,7 @@ def test():
         socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     # print res
     af, socktype, proto, canonname, sa = res[0]
-    server = ThreadedTCPServer(sa, ThreadedTCPRequestHandler)
+    server = ThreadedTCPServer(sa, ServerRequestHandler)
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
