@@ -9,9 +9,12 @@ import UI.main
 
 
 def main():
-    Network.server.main()
-    Network.client.main()
-    UI.main.main()
+    t1 = threading.Thread(target=Network.server.main)
+    t1.start()
+    t2 = threading.Thread(target=Network.client.main)
+    t2.start()
+    t3 = threading.Thread(target=UI.main.main)
+    t3.start()
 
 
 if __name__ == '__main__':
