@@ -36,13 +36,17 @@ class ServerVerifyRequestHandler(ThreadedTCPRequestHandler):
     Designed for server verify.
     """
     def handle(self):
-        data = self.request.recv(16384)
-        messageID, userDict = eval(data)
-        if Defines.verify.g_pLock.acquire():
-            if messageID > Defines.verify.g_nMessageID:
-                Defines.verify.g_dUserDict = userDict
-                Defines.verify.g_nMessageID = messageID
-        Defines.verify.g_pLock.release()
+        try:
+            data = self.request.recv(16384)
+            messageID, userDict = eval(data)
+            if Defines.verify.g_pLock.acquire():
+                if messageID > Defines.verify.g_nMessageID:
+                    Defines.verify.g_dUserDict = userDict
+                    Defines.verify.g_nMessageID = messageID
+            Defines.verify.g_pLock.release()
+        except Exception:
+            print 'Cannot receive data.\
+            Please check Network.server.ServerVerifyRequestHandler'
 
 
 def main():
@@ -54,7 +58,7 @@ def main():
         verifyCanonname, verifySa = verifyRes[0]
     serverVerify = ThreadedTCPServer(verifySa, ServerVerifyRequestHandler)
     serverVerify_thread = threading.Thread(target=serverVerify.serve_forever)
-    serverVerify_thread.setDaemon(True)
+    serverVerify_thread.setDaemon(False)
     serverVerify_thread.start()
     print 'serverVerify_thread start'
 
@@ -66,7 +70,7 @@ def main():
         receiveCanonname, receiveSa = receiveRes[0]
     serverReceive = ThreadedTCPServer(receiveSa, ServerReceiveRequestHandler)
     serverReceive_thread = threading.Thread(target=serverReceive.serve_forever)
-    serverReceive_thread.setDaemon(True)
+    serverReceive_thread.setDaemon(False)
     serverReceive_thread.start()
     print 'serverReceive_thread start'
     num_alive_thread = threading.activeCount()
