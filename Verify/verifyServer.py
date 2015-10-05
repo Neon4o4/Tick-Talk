@@ -28,14 +28,14 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
     def handle(self):
         data = self.request.recv(1024)
         hostname, res, loginorout = eval(data)
-        global g_pLock, g_nMessageID
+        global g_pLock, g_nMessageID, g_dUserDict
         if g_pLock.acquire():
             g_nMessageID += 1
             if loginorout is True:
                 g_dUserDict[res] = hostname  # In case same hostname.
             else:
                 del g_dUserDict[res]
-            sSend = str(VerifyServerRequestHandler.nMessageID) + str(g_dConnected)
+            sSend = str(g_nMessageID) + str(g_dUserDict)
         g_pLock.release()
         for addr in g_dUserDict.keys():
             t = threading.Thread(target=SendMessage, args=(addr, sSend))
