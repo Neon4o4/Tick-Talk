@@ -58,7 +58,7 @@ def main():
         verifyCanonname, verifySa = verifyRes[0]
     serverVerify = ThreadedTCPServer(verifySa, ServerVerifyRequestHandler)
     serverVerify_thread = threading.Thread(target=serverVerify.serve_forever)
-    serverVerify_thread.setDaemon(False)
+    serverVerify_thread.setDaemon(True)
     serverVerify_thread.start()
     print 'serverVerify_thread start'
 
@@ -70,7 +70,7 @@ def main():
         receiveCanonname, receiveSa = receiveRes[0]
     serverReceive = ThreadedTCPServer(receiveSa, ServerReceiveRequestHandler)
     serverReceive_thread = threading.Thread(target=serverReceive.serve_forever)
-    serverReceive_thread.setDaemon(False)
+    serverReceive_thread.setDaemon(True)
     serverReceive_thread.start()
     print 'serverReceive_thread start'
     num_alive_thread = threading.activeCount()
