@@ -2,13 +2,9 @@
 
 # coding=uft-8
 
-import Verify.verifyServer
-
 
 def main():
-    Verify.verifyServer.main()
+    pass
 
 if __name__ == '__main__':
     main()
-    while True:
-        pass
