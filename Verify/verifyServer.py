@@ -13,8 +13,12 @@ from copy import deepcopy
 def _send_message_to_addr(res, sMessage):
     af, socktype, proto, cannoname, sa = res
     pSocket = socket.socket(af, socktype, proto)
-    pSocket.connect(sa)
-    pSocket.sendall(sMessage)
+    try:
+        pSocket.connect(sa)
+        pSocket.sendall(sMessage)
+    except Exception:
+        print 'Cannot send message or connect to server.\
+            Please check verifyServer.py._send_message_to_addr.'
     pSocket.close()
 
 
@@ -23,9 +27,17 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
     Verify requests handler.
     """
     def handle(self):
-        data = self.request.recv(16384)
+        try:
+            data = self.request.recv(16384)
+        except Exception:
+            print 'Cannot receive message.\
+            Please check verifyServer.py.VerifyServerRequestHandler.handle 1.'
         hostname, res, loginorout = eval(data)
-        self.request.sendall(str((0, Defines.verify.g_dUserDict)))
+        try:
+            self.request.sendall(str((0, Defines.verify.g_dUserDict)))
+        except Exception:
+            print 'Cannot send message.\
+            Please check verifyServer.py.VerifyServerRequestHandler.handle 2.'
         if Defines.verify.g_pLock.accquire():
             if loginorout:
                 Defines.verify.g_dUserDict[res] = hostname
