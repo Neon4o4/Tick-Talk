@@ -8,6 +8,7 @@ from pyaudio import PyAudio
 from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
 import Defines.network
 import Defines.verify
+import Defines.recorder
 
 
 class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
@@ -17,10 +18,10 @@ class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
     def handle(self):
         pPyAudioObj = PyAudio()
         pStream = pPyAudioObj.open(
-            format=self.config['format'],
-            channels=self.config['channels'],
-            rate=self.config['rate'],
-            frames_per_buffer=self.config['frames_per_buffer'],
+            format=Defines.recorder.g_dRecord['format'],
+            channels=Defines.recorder.g_dRecord['channels'],
+            rate=Defines.recorder.g_dRecord['rate'],
+            frames_per_buffer=Defines.recorder.g_dRecord['frames_per_buffer'],
             output=True)
         try:
             data = self.request.recv(16384)

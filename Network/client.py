@@ -63,10 +63,13 @@ class MsgSender():
             socket.AI_PASSIVE)
         sMessage = str((socket.gethostname(), res[0], True))
         af, socktype, proto, cannoname, sa = res[0]
-        pSocket = socket.socket(af, socktype, proto)
-        pSocket.connect(sa)
-        pSocket.sendall(sMessage)
-        pSocket.close()
+        try:
+            pSocket = socket.socket(af, socktype, proto)
+            pSocket.connect(sa)
+            pSocket.sendall(sMessage)
+            pSocket.close()
+        except Exception:
+            print 'Fail when sending verify message.'
 
 
 def main():
