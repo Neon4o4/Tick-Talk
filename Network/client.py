@@ -11,11 +11,22 @@ import Defines.recorder
 from copy import deepcopy
 
 
-def _send_message_to_addr(addr, sMessage):
-    af, socktype, proto, cannoname, sa = addr
+def _send_message_to_addr(res, sMessage):
+    res = socket.getaddrinfo(
+        res,
+        Defines.network.g_nIPV4Port,
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        0,
+        socket.AI_PASSIVE)
+    af, socktype, proto, cannoname, sa = res[0]
     pSocket = socket.socket(af, socktype, proto)
-    pSocket.connect(sa)
-    pSocket.sendall(sMessage)
+    try:
+        pSocket.connect(sa)
+        pSocket.sendall(sMessage)
+    except Exception:
+        print 'Socket Exception happened in \
+        client.py._send_message_to_addr'
     pSocket.close()
 
 
@@ -61,17 +72,15 @@ class MsgSender():
                     Please check Network.server.ClientRequestHandler 2.'
 
     def sendLoginVerifyMsg(self):
-        # verifyIP = Defines.network.g_sIPV4Addr
-        verifyIP = '10.81.30.121'
-        verifyPort = Defines.network.g_nVerifyServerSpecialIPV4Port
+        sMessage = str((
+            socket.gethostname(), Defines.network.g_sIPV4Addr, True))
         res = socket.getaddrinfo(
-            verifyIP,
-            verifyPort,
+            Defines.network.g_sVerifyServerIPV4Address,
+            Defines.network.g_nVerifyServerSpecialIPV4Port,
             socket.AF_INET,
             socket.SOCK_STREAM,
             0,
             socket.AI_PASSIVE)
-        sMessage = str((socket.gethostname(), res[0], True))
         af, socktype, proto, cannoname, sa = res[0]
         try:
             pSocket = socket.socket(af, socktype, proto)

@@ -11,7 +11,14 @@ from copy import deepcopy
 
 
 def _send_message_to_addr(res, sMessage):
-    af, socktype, proto, cannoname, sa = res
+    res = socket.getaddrinfo(
+        res,
+        Defines.network.g_nIPV4VerifyPort,
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        0,
+        socket.AI_PASSIVE)
+    af, socktype, proto, cannoname, sa = res[0]
     pSocket = socket.socket(af, socktype, proto)
     try:
         pSocket.connect(sa)
@@ -28,8 +35,10 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
     """
     def handle(self):
         data = self.request.recv(16384)
+        print "data: %s" % data
         hostname, res, loginorout = eval(data)
-        self.request.sendall(str((0, Defines.verify.g_dUserDict)))
+        print 111
+        # self.request.sendall(str((0, Defines.verify.g_dUserDict)))
         if Defines.verify.g_pLock.acquire():
             if loginorout:
                 Defines.verify.g_dUserDict[res] = hostname
@@ -39,6 +48,7 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
             curUserDict = deepcopy(Defines.verify.g_dUserDict)
             sendMessage = str((Defines.verify.g_nMessageID, curUserDict))
         Defines.verify.g_pLock.release()
+        print Defines.verify.g_dUserDict
         for addr in curUserDict.keys():
             t = threading.Thread(
                 target=_send_message_to_addr, args=(addr, sendMessage))
