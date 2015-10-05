@@ -9,6 +9,10 @@ import Defines.verify
 import Defines.network
 import Defines.recorder
 from copy import deepcopy
+import weakref
+
+
+g_wrpMsgSender = None
 
 
 def _send_message_to_addr(res, sMessage):
@@ -19,7 +23,7 @@ def _send_message_to_addr(res, sMessage):
         socket.SOCK_STREAM,
         0,
         socket.AI_PASSIVE)
-    print res
+    # print res
     af, socktype, proto, cannoname, sa = res[0]
     pSocket = socket.socket(af, socktype, proto)
     try:
@@ -59,7 +63,7 @@ class MsgSender():
         if Defines.verify.g_pLock.acquire():
             UserDict = deepcopy(Defines.verify.g_dUserDict)
         Defines.verify.g_pLock.release()
-        print 'UserDict: %s' % str(UserDict)
+        # print 'UserDict: %s' % str(UserDict)
         for addr in UserDict:
         # if addr != Defines.network.g_sIPV4Addr:
             try:
@@ -96,6 +100,8 @@ class MsgSender():
 
 def main():
     msgSender = MsgSender(Defines.recorder.g_dRecord)
+    global g_wrpMsgSender
+    g_wrpMsgSender = weakref.ref(msgSender)
     msgSender.sendLoginVerifyMsg()
     while True:
         msgSender.handle()

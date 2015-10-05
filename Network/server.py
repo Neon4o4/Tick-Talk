@@ -9,6 +9,11 @@ from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
 import Defines.network
 import Defines.verify
 import Defines.recorder
+import weakref
+
+
+g_wrpServerVerify = None
+g_wrpServerReceive = None
 
 
 class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
@@ -62,6 +67,8 @@ def main():
     verifyAf, verifySocktype, verifyProto,\
         verifyCanonname, verifySa = verifyRes[0]
     serverVerify = ThreadedTCPServer(verifySa, ServerVerifyRequestHandler)
+    global g_wrpServerVerify
+    g_wrpServerVerify = weakref.ref(serverVerify)
     serverVerify_thread = threading.Thread(target=serverVerify.serve_forever)
     serverVerify_thread.setDaemon(True)
     serverVerify_thread.start()
@@ -74,6 +81,8 @@ def main():
     receiveAf, receiveSocktype, receiveproto,\
         receiveCanonname, receiveSa = receiveRes[0]
     serverReceive = ThreadedTCPServer(receiveSa, ServerReceiveRequestHandler)
+    global g_wrpServerReceive
+    g_wrpServerReceive = weakref.ref(serverReceive)
     serverReceive_thread = threading.Thread(target=serverReceive.serve_forever)
     serverReceive_thread.setDaemon(True)
     serverReceive_thread.start()
