@@ -52,9 +52,9 @@ class MsgSender():
         Defines.verify.g_pLock.release()
 
     def sendLoginVerifyMsg(self):
-        # verifyIP = Defines.network.g_sIPV6Addr
-        verifyIP = 'ipv6.clatter.cn'
-        verifyPort = Defines.network.g_nIPV6VerifyPort
+        verifyIP = Defines.network.g_sIPV4Addr
+        # verifyIP = '2001:250:401:3517:a65e:60ff:febd:e96f'
+        verifyPort = Defines.network.g_nIPV4VerifyPort
         res = socket.getaddrinfo(
             verifyIP,
             verifyPort,

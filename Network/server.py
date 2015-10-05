@@ -57,7 +57,7 @@ class ServerVerifyRequestHandler(ThreadedTCPRequestHandler):
 def main():
     # Verify port
     verifyRes = socket.getaddrinfo(
-        Defines.network.g_sIPV6Addr, Defines.network.g_nIPV6VerifyPort,
+        Defines.network.g_sIPV4Addr, Defines.network.g_nIPV4VerifyPort,
         socket.AF_INET, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     verifyAf, verifySocktype, verifyProto,\
         verifyCanonname, verifySa = verifyRes[0]
@@ -69,7 +69,7 @@ def main():
 
     # Receive port
     receiveRes = socket.getaddrinfo(
-        Defines.network.g_sIPV6Addr, Defines.network.g_nIPV6Port,
+        Defines.network.g_sIPV4Addr, Defines.network.g_nIPV4Port,
         socket.AF_INET, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     receiveAf, receiveSocktype, receiveproto,\
         receiveCanonname, receiveSa = receiveRes[0]
