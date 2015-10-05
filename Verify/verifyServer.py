@@ -7,17 +7,14 @@ import threading
 from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
 import Defines.network
 import Defines.verify
+from copy import deepcopy
 
 
 def _send_message_to_addr(res, sMessage):
     af, socktype, proto, cannoname, sa = res
     pSocket = socket.socket(af, socktype, proto)
-    try:
-        pSocket.connect(sa)
-        pSocket.sendall(sMessage)
-    except Exception:
-        print 'Cannot send message or connect to server.\
-            Please check verifyServer.py._send_message_to_addr.'
+    pSocket.connect(sa)
+    pSocket.sendall(sMessage)
     pSocket.close()
 
 
@@ -26,35 +23,22 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
     Verify requests handler.
     """
     def handle(self):
-        try:
-            data = self.request.recv(16384)
-        except Exception:
-            print 'Cannot receive message.\
-            Please check verifyServer.py.VerifyServerRequestHandler.handle 1.'
+        data = self.request.recv(16384)
         hostname, res, loginorout = eval(data)
-        try:
-            self.request.sendall(str((0, Defines.verify.g_dUserDict)))
-        except Exception:
-            print 'Cannot send message.\
-            Please check verifyServer.py.VerifyServerRequestHandler.handle 2.'
+        self.request.sendall(str((0, Defines.verify.g_dUserDict)))
         if Defines.verify.g_pLock.accquire():
             if loginorout:
                 Defines.verify.g_dUserDict[res] = hostname
             else:
                 del Defines.verify.g_dUserDict[res]
             Defines.verify.g_nMessageID += 1
-            sendMessage = str((
-                Defines.verify.g_nMessageID, Defines.verify.g_dUserDict))
-            try:
-                for addr in Defines.verify.g_dUserDict.keys():
-                    t = threading.Thread(
-                        target=_send_message_to_addr, args=(addr, sendMessage))
-                    t.start()
-            except Exception:
-                print 'Cannot create thread.\
-                Please check \
-                verifyServer.py.VerifyServerRequestHandler.handle 3.'
+            curUserDict = deepcopy(Defines.verify.g_dUserDict)
+            sendMessage = str((Defines.verify.g_nMessageID, curUserDict))
         Defines.verify.g_pLock.release()
+        for addr in curUserDict.keys():
+            t = threading.Thread(
+                target=_send_message_to_addr, args=(addr, sendMessage))
+            t.start()
 
 
 def main():
