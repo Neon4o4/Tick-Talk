@@ -38,17 +38,16 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
         print "data: %s" % data
         hostname, res, loginorout = eval(data)
         print 111
-        # self.request.sendall(str((0, Defines.verify.g_dUserDict)))
-        if Defines.verify.g_pLock.acquire():
+        if Defines.verify.g_pVerifyServerLock.acquire():
             if loginorout:
-                Defines.verify.g_dUserDict[res] = hostname
+                Defines.verify.g_dVerifyServerUserDict[res] = hostname
             else:
-                del Defines.verify.g_dUserDict[res]
+                del Defines.verify.g_dVerifyServerUserDict[res]
             Defines.verify.g_nMessageID += 1
-            curUserDict = deepcopy(Defines.verify.g_dUserDict)
+            curUserDict = deepcopy(Defines.verify.g_dVerifyServerUserDict)
             sendMessage = str((Defines.verify.g_nMessageID, curUserDict))
-        Defines.verify.g_pLock.release()
-        print Defines.verify.g_dUserDict
+        Defines.verify.g_pVerifyServerLock.release()
+        print Defines.verify.g_dVerifyServerUserDict
         for addr in curUserDict.keys():
             t = threading.Thread(
                 target=_send_message_to_addr, args=(addr, sendMessage))

@@ -71,9 +71,9 @@ class MsgSender():
                 print 'Cannot receive data.\
                     Please check Network.server.ClientRequestHandler 2.'
 
-    def sendLoginVerifyMsg(self):
+    def sendLoginVerifyMsg(self, loginorout=True):
         sMessage = str((
-            socket.gethostname(), Defines.network.g_sIPV4Addr, True))
+            socket.gethostname(), Defines.network.g_sIPV4Addr, loginorout))
         res = socket.getaddrinfo(
             Defines.network.g_sVerifyServerIPV4Address,
             Defines.network.g_nVerifyServerSpecialIPV4Port,
@@ -89,6 +89,9 @@ class MsgSender():
             pSocket.close()
         except Exception:
             print 'Fail when sending verify message.'
+
+    def sendLoginOutVerifyMsg(self):
+        self.sendLoginVerifyMsg(self, False)
 
 
 def main():
