@@ -58,7 +58,7 @@ class MsgSender():
         res = socket.getaddrinfo(
             verifyIP,
             verifyPort,
-            socket.AF_INET6,
+            socket.AF_INET,
             socket.SOCK_STREAM,
             0,
             socket.AI_PASSIVE)

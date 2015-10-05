@@ -46,7 +46,7 @@ class ServerRequestHandler(ThreadedTCPRequestHandler):
 def main():
     global g_sIPV6Addr, g_nIPV6Port
     res = socket.getaddrinfo(
-        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
+        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET,
         socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     af, socktype, proto, canonname, sa = res[0]
     server = ThreadedTCPServer(sa, ThreadedTCPRequestHandler)
@@ -65,7 +65,7 @@ def test():
     global g_sIPV6Addr, g_nIPV6Port, bTest
     bTest = True
     res = socket.getaddrinfo(
-        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
+        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET,
         socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     # print res
     af, socktype, proto, canonname, sa = res[0]

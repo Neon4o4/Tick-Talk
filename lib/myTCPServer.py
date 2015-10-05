@@ -19,7 +19,7 @@ class MyTCPServer(TCPServer):
         """
         BaseServer.__init__(self, server_address, RequestHandlerClass)
         res = socket.getaddrinfo(
-            server_address[0], server_address[1], socket.AF_INET6,
+            server_address[0], server_address[1], socket.AF_INET,
             socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
         af, socktype, proto, canonname, sa = res[0]
         self.socket = socket.socket(af, socktype, proto)

@@ -50,7 +50,7 @@ def main():
     res = socket.getaddrinfo(
         Defines.network.g_sIPV6Addr,
         Defines.network.g_nIPV6VerifyPort,
-        socket.AF_INET6, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+        socket.AF_INET, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     af, socktype, proto, cannoname, sa = res[0]
     server = ThreadedTCPServer(sa, VerifyServerRequestHandler)
     server_thread = threading.Thread(target=server.serve_forever)
