@@ -174,7 +174,7 @@
 				<integer>194</integer>
 			</dict>
 			<key>ID</key>
-			<integer>199</integer>
+			<integer>207</integer>
 			<key>Points</key>
 			<array>
 				<string>{576, 864}</string>
@@ -195,7 +195,7 @@
 			<key>Tail</key>
 			<dict>
 				<key>ID</key>
-				<integer>197</integer>
+				<integer>205</integer>
 				<key>Info</key>
 				<integer>1</integer>
 			</dict>
@@ -220,10 +220,10 @@
 			<key>Head</key>
 			<dict>
 				<key>ID</key>
-				<integer>197</integer>
+				<integer>205</integer>
 			</dict>
 			<key>ID</key>
-			<integer>198</integer>
+			<integer>206</integer>
 			<key>Points</key>
 			<array>
 				<string>{576, 792}</string>
@@ -255,7 +255,7 @@
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>197</integer>
+			<integer>205</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{0, 1}</string>
@@ -1713,7 +1713,7 @@ lock userDict}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2015-10-05 01:19:03 +0000</string>
+	<string>2015-10-05 01:43:05 +0000</string>
 	<key>Modifier</key>
 	<string>LiXu-mac</string>
 	<key>NotesVisible</key>

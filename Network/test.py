@@ -1,6 +1,6 @@
 import socket
 import threading
-import getAddress
+import lib.getAddress as getAddress
 
 g_nTest = 1
 mutex = threading.Lock()

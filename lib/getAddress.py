@@ -9,8 +9,10 @@ def GetIPV6Address():
     from platform import system
     """
     This function will return your local machine's ipv6 address if it exits.
-    If the local machine doesn't have a ipv6 address,then this function return None.
-    This function use subprocess to execute command "ipconfig", then get the output
+    If the local machine doesn't have a ipv6 address,
+    then this function return None.
+    This function use subprocess to execute command "ipconfig",
+    then get the output
     and use regex to parse it ,trying to  find ipv6 address.
     """
     platform = system()
@@ -20,7 +22,7 @@ def GetIPV6Address():
         getIPV6_process = Popen("ifconfig", stdout=PIPE)
 
     output = (getIPV6_process.stdout.read())
-    ipv6_pattern='(([a-f0-9]{1,4}:){7}[a-f0-9]{1,4})'
+    ipv6_pattern = '(([a-f0-9]{1,4}:){7}[a-f0-9]{1,4})'
     m = search(ipv6_pattern, str(output))
     if m is not None:
         return m.group()

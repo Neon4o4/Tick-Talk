@@ -4,13 +4,13 @@
 
 import socket
 import threading
-from SocketServer import BaseServer, BaseRequestHandler, ThreadingMixIn
+from SocketServer import BaseRequestHandler, ThreadingMixIn
 from pyaudio import PyAudio, paInt16
 from lib.myTCPServer import MyTCPServer
 import Defines.network as network
 
 
-bTest = False
+bTest = True
 g_sIPV4Addr = network.g_sIPV4
 g_nIPV4Port = network.g_nIPV4Port
 g_sIPV6Addr = network.g_sIPV6
@@ -37,7 +37,8 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
             for i in range(10000000):
                 s += 1
             nThreadNum = threading.activeCount()
-            response = "{}: {}".format(cur_thread.name, data) + "\nCurrent alive thread_num is " + str(nThreadNum)
+            response = "{}: {}".format(cur_thread.name, data) \
+                + "\nCurrent alive thread_num is " + str(nThreadNum)
             self.request.sendall(response)
 
 
