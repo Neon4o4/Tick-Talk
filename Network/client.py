@@ -11,6 +11,14 @@ import Defines.recorder
 from copy import deepcopy
 
 
+def _send_message_to_addr(addr, sMessage):
+    af, socktype, proto, cannoname, sa = addr
+    pSocket = socket.socket(af, socktype, proto)
+    pSocket.connect(sa)
+    pSocket.sendall(sMessage)
+    pSocket.close()
+
+
 class MsgSender():
     """
     Designed for receive data stream.
@@ -19,13 +27,6 @@ class MsgSender():
         self.config = RecorderConfig
         self.pPyAudioObj = PyAudio()
         self.pStream = None
-
-    def _send_message_to_addr(addr, sMessage):
-        af, socktype, proto, cannoname, sa = addr
-        pSocket = socket.socket(af, socktype, proto)
-        pSocket.connect(sa)
-        pSocket.sendall(sMessage)
-        pSocket.close()
 
     def handle(self):
         print 111
@@ -62,7 +63,7 @@ class MsgSender():
     def sendLoginVerifyMsg(self):
         # verifyIP = Defines.network.g_sIPV4Addr
         verifyIP = '10.81.30.121'
-        verifyPort = Defines.network.g_nIPV4VerifyPort
+        verifyPort = Defines.network.g_nVerifyServerSpecialIPV4Port
         res = socket.getaddrinfo(
             verifyIP,
             verifyPort,

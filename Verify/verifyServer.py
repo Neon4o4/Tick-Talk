@@ -49,7 +49,7 @@ def main():
     # Verify server
     res = socket.getaddrinfo(
         Defines.network.g_sIPV4Addr,
-        Defines.network.g_nIPV4VerifyPort,
+        Defines.network.g_nVerifyServerSpecialIPV4Port,
         socket.AF_INET, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
     af, socktype, proto, cannoname, sa = res[0]
     server = ThreadedTCPServer(sa, VerifyServerRequestHandler)

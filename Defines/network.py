@@ -14,6 +14,10 @@ g_sIPV4Addr = getAddress.GetIPV4Address()
 g_nIPV4Port = 40004
 g_nIPV4VerifyPort = 40003
 
+# VerifyServer
+g_nVerifyServerSpecialIPV6Port = 60004
+g_nVerifyServerSpecialIPV4Port = 40002
+
 
 if __name__ == '__main__':
     print "g_sIPV6Addr = ", g_sIPV6Addr
