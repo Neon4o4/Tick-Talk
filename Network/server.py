@@ -6,81 +6,52 @@ import socket
 import threading
 from pyaudio import PyAudio, paInt16
 from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
-from Defines.network import g_sIPV6Addr as g_sIPV6Addr
-from Defines.network import g_nIPV6Port as g_nIPV6Port
+from Defines.network import g_sIPV6Addr
+from Defines.network import g_nIPV6Port
+from Defines.network import g_nIPV6VerifyPort
 
 
-bTest = True
-
-
-class ServerRequestHandler(ThreadedTCPRequestHandler):
+class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
     """
-    Server's request handler.
-    Rewrite method 'handle' to fix recv and send/sendall issues.
+    Designed for receive data stream.
     """
     def handle(self):
-        if bTest is False:
-            pPyAudioObj = PyAudio()
-            pStream = pPyAudioObj.open(
-                format=paInt16, channels=1, rate=16000, output=True)
-            data = self.request.recv(16384)
-            pStream.write(data)
-        else:
-            data = self.request.recv(1024)
-            cur_thread = threading.current_thread()
-            # print cur_alive_thread_num
-            s = 0
-            for i in range(10000000):
-                s += 1
-            nThreadNum = threading.activeCount()
-            response = "{}: {}".format(cur_thread.name, data) \
-                + "\nCurrent alive thread_num is " + str(nThreadNum)
-            self.request.sendall(response)
+        pass
+
+
+class ServerVerifyRequestHandler(ThreadedTCPRequestHandler):
+    """
+    Designed for server verify.
+    """
+    def handle(self):
+        pass
 
 
 def main():
-    global g_sIPV6Addr, g_nIPV6Port
-    res = socket.getaddrinfo(
+    # Verify port
+    verifyRes = socket.getaddrinfo(
+        g_sIPV6Addr, g_nIPV6VerifyPort, socket.AF_INET6,
+        socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+    verifyAf, verifySocktype, verifyProto, verifyCanonname, verifySa = verifyRes[0]
+    serverVerify = ThreadedTCPServer(verifySa, ServerVerifyRequestHandler)
+    serverVerify_thread = threading.Thread(target=serverVerify.serve_forever)
+    serverVerify_thread.setDaemon(True)
+    serverVerify_thread.start()
+    print 'serverVerify_thread start'
+
+    # Receive port
+    receiveRes = socket.getaddrinfo(
         g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
         socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
-    af, socktype, proto, canonname, sa = res[0]
-    server = ThreadedTCPServer(sa, ThreadedTCPRequestHandler)
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
-    server_thread.start()
-    print "Server loop starts!"
-    # server.shutdown()
-    # server.server_close()
+    receiveAf, receiveSocktype, receiveproto, receiveCanonname, receiveSa = receiveRes[0]
+    serverReceive = ThreadedTCPServer(receiveSa, ServerReceiveRequestHandler)
+    serverReceive_thread = threading.Thread(target=serverReceive.serve_forever)
+    serverReceive_thread.setDaemon(True)
+    serverReceive_thread.start()
+    print 'serverReceive_thread start'
 
-
-def test():
-    """
-    This method works with test.py in folder Network.
-    """
-    global g_sIPV6Addr, g_nIPV6Port, bTest
-    bTest = True
-    res = socket.getaddrinfo(
-        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
-        socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
-    # print res
-    af, socktype, proto, canonname, sa = res[0]
-    server = ThreadedTCPServer(sa, ServerRequestHandler)
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
-    server_thread.start()
-    print "Server loop starts!"
     while True:
         pass
-    # p1 = CTest(res[0], "1")
-    # p2 = CTest(res[0], "2")
-    # p3 = CTest(res[0], "3")
-    # from Utilities.Util import Functor
-    # import time
-    # time.sleep(3)
-    # server.shutdown()
-    # server.server_close()
-
 
 if __name__ == '__main__':
-    # main()
-    test()
+    main()
