@@ -2,58 +2,61 @@
 
 # coding=uft-8
 
-from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
 import socket
 import threading
-from Defines.verify import g_dUserDict, g_nMessageID
-from Defines.network import g_sIPV6Addr, g_nIPV6Port
+from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
+import Defines.network
+import Defines.verify
+from copy import deepcopy
 
 
-g_pLock = threading.Lock()
-
-
-def SendMessage(res, message):
-    af, socktype, proto, canonname, sa = res
+def _send_message_to_addr(res, sMessage):
+    af, socktype, proto, cannoname, sa = res
     pSocket = socket.socket(af, socktype, proto)
     pSocket.connect(sa)
-    pSocket.sendall(message)
+    pSocket.sendall(sMessage)
     pSocket.close()
 
 
 class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
     """
-    Server's request handler.
-    Rewrite method 'handle' to fix recv and send/sendall issues.
+    Verify requests handler.
     """
     def handle(self):
-        data = self.request.recv(1024)
+        data = self.request.recv(16384)
         hostname, res, loginorout = eval(data)
-        global g_pLock, g_nMessageID, g_dUserDict
-        if g_pLock.acquire():
-            g_nMessageID += 1
-            if loginorout is True:
-                g_dUserDict[res] = hostname  # In case same hostname.
+        self.request.sendall(str((0, Defines.verify.g_dUserDict)))
+        if Defines.verify.g_pLock.accquire():
+            if loginorout:
+                Defines.verify.g_dUserDict[res] = hostname
             else:
-                del g_dUserDict[res]
-            sSend = str(g_nMessageID) + str(g_dUserDict)
-        g_pLock.release()
-        for addr in g_dUserDict.keys():
-            t = threading.Thread(target=SendMessage, args=(addr, sSend))
+                del Defines.verify.g_dUserDict[res]
+            Defines.verify.g_nMessageID += 1
+            curUserDict = deepcopy(Defines.verify.g_dUserDict)
+            sendMessage = str((Defines.verify.g_nMessageID, curUserDict))
+        Defines.verify.g_pLock.release()
+        for addr in curUserDict.keys():
+            t = threading.Thread(
+                target=_send_message_to_addr, args=(addr, sendMessage))
             t.start()
 
 
 def main():
-    global g_sIPV6Addr, g_nIPV6Port
+    # Verify server
     res = socket.getaddrinfo(
-        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
-        socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
-    af, socktype, proto, canonname, sa = res[0]
+        Defines.network.g_sIPV6Addr,
+        Defines.network.g_nIPV6VerifyPort,
+        socket.AF_INET6, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+    af, socktype, proto, cannoname, sa = res[0]
     server = ThreadedTCPServer(sa, VerifyServerRequestHandler)
     server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server_thread.setDaemon(True)
     server_thread.start()
-    print "verifyServer loop starts!"
+    print "verifyServer_thread start"
+    # mainloop
     while True:
         pass
-    # server.shutdown()
-    # server.server_close()
+
+
+if __name__ == '__main__':
+        main()

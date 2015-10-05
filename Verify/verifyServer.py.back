@@ -1,0 +1,59 @@
+#! /usr/bin/env python
+
+# coding=uft-8
+
+from lib.myTCPServer import ThreadedTCPServer, ThreadedTCPRequestHandler
+import socket
+import threading
+from Defines.verify import g_dUserDict, g_nMessageID
+from Defines.network import g_sIPV6Addr, g_nIPV6Port
+
+
+g_pLock = threading.Lock()
+
+
+def SendMessage(res, message):
+    af, socktype, proto, canonname, sa = res
+    pSocket = socket.socket(af, socktype, proto)
+    pSocket.connect(sa)
+    pSocket.sendall(message)
+    pSocket.close()
+
+
+class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
+    """
+    Server's request handler.
+    Rewrite method 'handle' to fix recv and send/sendall issues.
+    """
+    def handle(self):
+        data = self.request.recv(1024)
+        hostname, res, loginorout = eval(data)
+        global g_pLock, g_nMessageID, g_dUserDict
+        if g_pLock.acquire():
+            g_nMessageID += 1
+            if loginorout is True:
+                g_dUserDict[res] = hostname  # In case same hostname.
+            else:
+                del g_dUserDict[res]
+            sSend = str(g_nMessageID) + str(g_dUserDict)
+        g_pLock.release()
+        for addr in g_dUserDict.keys():
+            t = threading.Thread(target=SendMessage, args=(addr, sSend))
+            t.start()
+
+
+def main():
+    global g_sIPV6Addr, g_nIPV6Port
+    res = socket.getaddrinfo(
+        g_sIPV6Addr, g_nIPV6Port, socket.AF_INET6,
+        socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+    af, socktype, proto, canonname, sa = res[0]
+    server = ThreadedTCPServer(sa, VerifyServerRequestHandler)
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
+    server_thread.start()
+    print "verifyServer loop starts!"
+    while True:
+        pass
+    # server.shutdown()
+    # server.server_close()
