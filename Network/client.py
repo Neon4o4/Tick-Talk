@@ -28,6 +28,7 @@ class MsgSender():
         pSocket.close()
 
     def handle(self):
+        print 111
         if not self.pStream:
             self.pStream = self.pPyAudioObj.open(
                 format=self.config['format'],
@@ -37,19 +38,23 @@ class MsgSender():
                 input=True)
         pStream = self.pStream
         try:
+            print 222
             data = pStream.read(self.config['bufferSize'])
+            print 333
         except Exception, e:
             print 'Cannot recognize received sound stream.\
                 Please check Network.server.ClientRequestHandler 1.'
             print e
         # lock g_dUserDict
         UserDict = deepcopy(Defines.verify.g_dUserDict)
+        print 'UserDict: %s' % str(UserDict)
         for addr in UserDict:
             try:
                 t = threading.Thread(
                     target=MsgSender._send_message_to_addr,
                     args=(addr, data))
                 t.start()
+                print 'thread start'
             except Exception:
                 print 'Cannot receive data.\
                     Please check Network.server.ClientRequestHandler 2.'
