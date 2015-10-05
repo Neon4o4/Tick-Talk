@@ -19,6 +19,7 @@ def _send_message_to_addr(res, sMessage):
         socket.SOCK_STREAM,
         0,
         socket.AI_PASSIVE)
+    print res
     af, socktype, proto, cannoname, sa = res[0]
     pSocket = socket.socket(af, socktype, proto)
     try:
@@ -40,7 +41,6 @@ class MsgSender():
         self.pStream = None
 
     def handle(self):
-        print 111
         if not self.pStream:
             self.pStream = self.pPyAudioObj.open(
                 format=self.config['format'],
@@ -50,26 +50,26 @@ class MsgSender():
                 input=True)
         pStream = self.pStream
         try:
-            print 222
             data = pStream.read(self.config['bufferSize'])
-            print 333
         except Exception, e:
-            print 'Cannot recognize received sound stream.\
-                Please check Network.server.ClientRequestHandler 1.'
+            print 'Cannot recognize read sound stream.\
+                Please check Network.client.MsgSender 1.'
             print e
         # lock g_dUserDict
-        UserDict = deepcopy(Defines.verify.g_dUserDict)
+        if Defines.verify.g_pLock.acquire():
+            UserDict = deepcopy(Defines.verify.g_dUserDict)
+        Defines.verify.g_pLock.release()
         print 'UserDict: %s' % str(UserDict)
         for addr in UserDict:
+        # if addr != Defines.network.g_sIPV4Addr:
             try:
                 t = threading.Thread(
-                    target=MsgSender._send_message_to_addr,
+                    target=_send_message_to_addr,
                     args=(addr, data))
                 t.start()
-                print 'thread start'
             except Exception:
-                print 'Cannot receive data.\
-                    Please check Network.server.ClientRequestHandler 2.'
+                print 'Cannot send data.\
+                    Please check Network.client.MsgSender 2.'
 
     def sendLoginVerifyMsg(self, loginorout=True):
         sMessage = str((

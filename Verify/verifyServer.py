@@ -35,9 +35,11 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
     """
     def handle(self):
         data = self.request.recv(16384)
-        print "data: %s" % data
         hostname, res, loginorout = eval(data)
-        print 111
+        if loginorout:
+            print "(hostname=%s, addr=%s) is in." % (hostname, res)
+        else:
+            print "(hostname=%s, addr=%s) is lost." % (hostname, res)
         if Defines.verify.g_pVerifyServerLock.acquire():
             if loginorout:
                 Defines.verify.g_dVerifyServerUserDict[res] = hostname
