@@ -73,5 +73,6 @@ def main():
 
 if __name__ == '__main__':
         main()
-        while True:
-            pass
+        __MAIN__THREAD__LOCK__ = threading.Lock()
+        __MAIN__THREAD__LOCK__.acquire()
+        __MAIN__THREAD__LOCK__.acquire()

@@ -12,6 +12,8 @@ from Defines.network import g_nIPV6Port as g_nIPV6Port
 
 bTest = True
 
+g_pLock = threading.Lock()
+
 
 class ServerRequestHandler(ThreadedTCPRequestHandler):
     """
@@ -27,7 +29,10 @@ class ServerRequestHandler(ThreadedTCPRequestHandler):
             pStream.write(data)
         else:
             data = self.request.recv(1024)
-            cur_thread = threading.current_thread()
+            global g_pLock
+            if g_pLock.acquire():
+                cur_thread = threading.current_thread()
+            g_pLock.release()
             # print cur_alive_thread_num
             s = 0
             for i in range(10000000):
@@ -69,8 +74,6 @@ def test():
     server_thread.daemon = True
     server_thread.start()
     print "Server loop starts!"
-    while True:
-        pass
     # p1 = CTest(res[0], "1")
     # p2 = CTest(res[0], "2")
     # p3 = CTest(res[0], "3")
@@ -84,3 +87,6 @@ def test():
 if __name__ == '__main__':
     # main()
     test()
+    pLock = threading.Lock()
+    pLock.acquire()
+    pLock.acquire()
