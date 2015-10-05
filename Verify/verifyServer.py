@@ -65,10 +65,9 @@ def main():
     server_thread.setDaemon(True)
     server_thread.start()
     print "verifyServer_thread start"
-    # mainloop
-    while True:
-        pass
 
 
 if __name__ == '__main__':
         main()
+        while True:
+            pass

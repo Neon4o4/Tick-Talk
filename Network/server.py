@@ -75,8 +75,8 @@ def main():
     print 'serverReceive_thread start'
     num_alive_thread = threading.activeCount()
     print 'Current active thread num is: ', num_alive_thread
-    while True:
-        pass
 
 if __name__ == '__main__':
     main()
+    while True:
+        pass
