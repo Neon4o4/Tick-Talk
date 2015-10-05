@@ -30,7 +30,7 @@ class VerifyServerRequestHandler(ThreadedTCPRequestHandler):
         data = self.request.recv(16384)
         hostname, res, loginorout = eval(data)
         self.request.sendall(str((0, Defines.verify.g_dUserDict)))
-        if Defines.verify.g_pLock.accquire():
+        if Defines.verify.g_pLock.acquire():
             if loginorout:
                 Defines.verify.g_dUserDict[res] = hostname
             else:
