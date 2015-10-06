@@ -45,35 +45,35 @@ class MsgSender():
         self.pStream = None
 
     def handle(self):
-        if not self.pStream:
-            self.pStream = self.pPyAudioObj.open(
-                format=self.config['format'],
-                channels=self.config['channels'],
-                rate=self.config['rate'],
-                frames_per_buffer=self.config['frames_per_buffer'],
-                input=True)
+        self.pStream = self.pPyAudioObj.open(
+            format=self.config['format'],
+            channels=self.config['channels'],
+            rate=self.config['rate'],
+            frames_per_buffer=self.config['frames_per_buffer'],
+            input=True)
         pStream = self.pStream
-        try:
-            data = pStream.read(self.config['bufferSize'])
-        except Exception, e:
-            print 'Cannot recognize read sound stream.\
-                Please check Network.client.MsgSender 1.'
-            print e
-        # lock g_dUserDict
-        if Defines.verify.g_pLock.acquire():
-            UserDict = deepcopy(Defines.verify.g_dUserDict)
-        Defines.verify.g_pLock.release()
-        # print 'UserDict: %s' % str(UserDict)
-        for addr in UserDict:
-        # if addr != Defines.network.g_sIPV4Addr:
+        while True:
             try:
-                t = threading.Thread(
-                    target=_send_message_to_addr,
-                    args=(addr, data))
-                t.start()
-            except Exception:
-                print 'Cannot send data.\
-                    Please check Network.client.MsgSender 2.'
+                data = pStream.read(self.config['bufferSize'])
+            except Exception, e:
+                print 'Cannot recognize read sound stream.\
+                    Please check Network.client.MsgSender 1.'
+                print e
+            # lock g_dUserDict
+            if Defines.verify.g_pLock.acquire():
+                UserDict = deepcopy(Defines.verify.g_dUserDict)
+            Defines.verify.g_pLock.release()
+            # print 'UserDict: %s' % str(UserDict)
+            for addr in UserDict:
+            # if addr != Defines.network.g_sIPV4Addr:
+                try:
+                    t = threading.Thread(
+                        target=_send_message_to_addr,
+                        args=(addr, data))
+                    t.start()
+                except Exception:
+                    print 'Cannot send data.\
+                        Please check Network.client.MsgSender 2.'
 
     def sendLoginVerifyMsg(self, loginorout=True):
         sMessage = str((
@@ -103,8 +103,7 @@ def main():
     global g_wrpMsgSender
     g_wrpMsgSender = weakref.ref(msgSender)
     msgSender.sendLoginVerifyMsg()
-    while True:
-        msgSender.handle()
+    msgSender.handle()
 
 if __name__ == '__main__':
     main()
