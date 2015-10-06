@@ -65,15 +65,15 @@ class MsgSender():
             Defines.verify.g_pLock.release()
             # print 'UserDict: %s' % str(UserDict)
             for addr in UserDict:
-            # if addr != Defines.network.g_sIPV4Addr:
-                try:
-                    t = threading.Thread(
-                        target=_send_message_to_addr,
-                        args=(addr, data))
-                    t.start()
-                except Exception:
-                    print 'Cannot send data.\
-                        Please check Network.client.MsgSender 2.'
+                if addr != Defines.network.g_sIPV4Addr:
+                    try:
+                        t = threading.Thread(
+                            target=_send_message_to_addr,
+                            args=(addr, data))
+                        t.start()
+                    except Exception:
+                        print 'Cannot send data.\
+                            Please check Network.client.MsgSender 2.'
 
     def sendLoginVerifyMsg(self, loginorout=True):
         sMessage = str((
