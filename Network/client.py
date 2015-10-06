@@ -35,6 +35,19 @@ def _send_message_to_addr(res, sMessage):
     pSocket.close()
 
 
+def send2GroupThreaded(UserDict, Msg):
+    for addr in UserDict:
+        if addr != Defines.network.g_sIPV4Addr:
+            try:
+                threading.Thread(
+                    target=_send_message_to_addr,
+                    args=(addr, Msg)
+                ).start()
+            except Exception:
+                print 'Cannot send data.\
+                    Please check Network.client.MsgSender 2.'
+
+
 class MsgSender():
     """
     Designed for receive data stream.
@@ -64,16 +77,10 @@ class MsgSender():
                 UserDict = deepcopy(Defines.verify.g_dUserDict)
             Defines.verify.g_pLock.release()
             # print 'UserDict: %s' % str(UserDict)
-            for addr in UserDict:
-                if addr != Defines.network.g_sIPV4Addr:
-                    try:
-                        t = threading.Thread(
-                            target=_send_message_to_addr,
-                            args=(addr, data))
-                        t.start()
-                    except Exception:
-                        print 'Cannot send data.\
-                            Please check Network.client.MsgSender 2.'
+            threading.Thread(
+                target=send2GroupThreaded,
+                args=(UserDict, data)
+            ).start()
 
     def sendLoginVerifyMsg(self, loginorout=True):
         sMessage = str((
