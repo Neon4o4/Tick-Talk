@@ -28,15 +28,15 @@ class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
         except Exception:
             print 'Cannot receive data.\
                 Please check Network.server.ServerReceiveRequestHandler 1.'
-        # try:
-        pObj = Defines.loopPyAudioObject.GetOneFreeObj()
-        pStream = pObj.m_pOutputStream
-        pStream.write(data)
-        pObj.m_bInUse = False
-        # except Exception, e:
-        #     print 'Cannot recognize received sound stream.\
-        #         Please check Network.server.ServerReceiveRequestHandler 2.'
-        #     print e
+        try:
+            pObj = Defines.loopPyAudioObject.GetOneFreeObj()
+            pStream = pObj.m_pOutputStream
+            pStream.write(data)
+            pObj.m_bInUse = False
+        except Exception, e:
+            print 'Cannot recognize received sound stream.\
+                Please check Network.server.ServerReceiveRequestHandler 2.'
+            print e
 
 
 class ServerVerifyRequestHandler(ThreadedTCPRequestHandler):
