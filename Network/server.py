@@ -22,7 +22,6 @@ class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
     Designed for receive data stream.
     """
     def handle(self):
-        # pStream = Defines.recorder.g_pOutputStream
         try:
             data = self.request.recv(16384)
         except Exception:
@@ -32,11 +31,12 @@ class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
             pObj = Defines.loopPyAudioObject.GetOneFreeObj()
             pStream = pObj.m_pOutputStream
             pStream.write(data)
-            pObj.m_bInUse = False
         except Exception, e:
             print 'Cannot recognize received sound stream.\
                 Please check Network.server.ServerReceiveRequestHandler 2.'
             print e
+        finally:
+            pObj.m_bInUse = False
 
 
 class ServerVerifyRequestHandler(ThreadedTCPRequestHandler):
