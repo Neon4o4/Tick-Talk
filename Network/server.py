@@ -10,6 +10,7 @@ import Defines.network
 import Defines.verify
 import Defines.recorder
 import weakref
+import Defines.loopPyAudioObject
 
 
 g_wrpServerVerify = None
@@ -22,23 +23,20 @@ class ServerReceiveRequestHandler(ThreadedTCPRequestHandler):
     """
     def handle(self):
         # pStream = Defines.recorder.g_pOutputStream
-        pStream = PyAudio().open(
-            format=Defines.recorder.g_dRecord['format'],
-            channels=Defines.recorder.g_dRecord['channels'],
-            rate=Defines.recorder.g_dRecord['rate'],
-            frames_per_buffer=Defines.recorder.g_dRecord['frames_per_buffer'],
-            output=True)
         try:
             data = self.request.recv(16384)
         except Exception:
             print 'Cannot receive data.\
                 Please check Network.server.ServerReceiveRequestHandler 1.'
-        try:
-            pStream.write(data)
-        except Exception:
-            print 'Cannot recognize received sound stream.\
-                Please check Network.server.ServerReceiveRequestHandler 2.'
-        pStream.close()
+        # try:
+        pObj = Defines.loopPyAudioObject.GetOneFreeObj()
+        pStream = pObj.m_pOutputStream
+        pStream.write(data)
+        pObj.m_bInUse = False
+        # except Exception, e:
+        #     print 'Cannot recognize received sound stream.\
+        #         Please check Network.server.ServerReceiveRequestHandler 2.'
+        #     print e
 
 
 class ServerVerifyRequestHandler(ThreadedTCPRequestHandler):
