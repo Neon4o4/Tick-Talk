@@ -23,15 +23,15 @@ def _send_message_to_addr(res, sMessage):
         socket.SOCK_STREAM,
         0,
         socket.AI_PASSIVE)
-    # print res
     af, socktype, proto, cannoname, sa = res[0]
     pSocket = socket.socket(af, socktype, proto)
     try:
         pSocket.connect(sa)
         pSocket.sendall(sMessage)
-    except Exception:
+    except Exception, e:
         print 'Socket Exception happened in \
         client.py._send_message_to_addr'
+        print 'Exception details: %s' % str(e)
     pSocket.close()
 
 
