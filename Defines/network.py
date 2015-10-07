@@ -16,8 +16,8 @@ g_nIPV4VerifyPort = 40003
 
 # VerifyServer
 g_sVerifyServerIPV6Address = "::1"
-g_sVerifyServerIPV4Address = g_sIPV4Addr
-# g_sVerifyServerIPV4Address = '10.2.176.82'
+# g_sVerifyServerIPV4Address = g_sIPV4Addr
+g_sVerifyServerIPV4Address = '209.141.42.245'
 g_nVerifyServerSpecialIPV6Port = 60004
 g_nVerifyServerSpecialIPV4Port = 40002
 
